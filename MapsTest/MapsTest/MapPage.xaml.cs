@@ -14,14 +14,18 @@ namespace MapsTest
         {
             InitializeComponent();
 
+            // Add a sample pushpin to the map
             MyMap.Pins.Add(new Xamarin.Forms.Maps.Pin() { Label = "Cheese", Position = new Xamarin.Forms.Maps.Position(52.4817055, -1.9065627) });
-            MyMap.MoveToRegion(Xamarin.Forms.Maps.MapSpan.FromCenterAndRadius(new Xamarin.Forms.Maps.Position(52.4817055, -1.9065627), Xamarin.Forms.Maps.Distance.FromKilometers(3)));
+
+            // Move the view to surround the pushpin
+            MyMap.MoveToRegion(Xamarin.Forms.Maps.MapSpan.FromCenterAndRadius(new Xamarin.Forms.Maps.Position(52.4817055, -1.9065627), Xamarin.Forms.Maps.Distance.FromKilometers(2)));
 
             Task.Run(async () =>
             {
                 await Task.Delay(10000);
                 Device.BeginInvokeOnMainThread(() =>
                 {
+                    // add an additional pushpin to simlulate user action
                     MyMap.Pins.Add(new Xamarin.Forms.Maps.Pin() { Label = "Toast", Position = new Xamarin.Forms.Maps.Position(52.479014, -1.9039143) });
                 });
 

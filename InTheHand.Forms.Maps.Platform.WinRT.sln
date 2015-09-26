@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapsTest.Droid", "MapsTest\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapsTest.WinPhone", "MapsTest\MapsTest.WinPhone\MapsTest.WinPhone.csproj", "{3FE32022-96D6-4F62-A081-96B1E6E82E2B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapsTest.WinRT", "MapsTest.WinRT\MapsTest.WinRT.csproj", "{B08D854C-EE39-4F89-AB4E-D5322AF4AF28}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapsTest.WinRT", "MapsTest\MapsTest.WinRT\MapsTest.WinRT.csproj", "{B08D854C-EE39-4F89-AB4E-D5322AF4AF28}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

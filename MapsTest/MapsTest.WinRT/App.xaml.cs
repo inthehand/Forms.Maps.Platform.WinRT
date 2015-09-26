@@ -67,7 +67,9 @@ namespace MapsTest.WinRT
                 // Set the default language
                 rootFrame.Language = Windows.Globalization.ApplicationLanguages.Languages[0];
 
+                // Initialize the Windows RT Mapping Support (for demo no serviceToken is supplied)
                 InTheHand.FormsMaps.Init(null);
+
                 Xamarin.Forms.Forms.Init(e);
 
                 if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
