@@ -9,4 +9,4 @@ Once you've added the NuGet package to your Windows Phone 8.1 Xamarin Forms app 
 
 InTheHand.FormsMaps.Init(<your maps key here>);
 
-For debugging you can pass null for the map key and the map will display a banner showing that no license key is supplied. You can get a Maps key for your app from the Windows Dev Center.
+You can then use the Geocoder or Map control in your Portable/shared Xamarin Forms project as you would on Android, iOS or Windows Phone Silverlight. For debugging you can pass null for the map key and the map will display a banner showing that no license key is supplied. You can get a Maps key for your app from the Windows Dev Center.
