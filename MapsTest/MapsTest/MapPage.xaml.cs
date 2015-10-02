@@ -29,6 +29,13 @@ namespace MapsTest
                     MyMap.Pins.Add(new Xamarin.Forms.Maps.Pin() { Label = "Toast", Position = new Xamarin.Forms.Maps.Position(52.479014, -1.9039143) });
                 });
 
+                await Task.Delay(10000);
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    // add an additional pushpin to simlulate user action
+                    MyMap.Pins.Add(new Xamarin.Forms.Maps.Pin() { Label = "Cup of Tea", Position = new Xamarin.Forms.Maps.Position(52.4804469, -1.9019083) });
+                });
+
             });
         }
     }
