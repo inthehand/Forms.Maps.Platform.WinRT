@@ -7,13 +7,21 @@ using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 using System.Reflection;
 using System.Collections.Specialized;
+#if WINDOWS_APP
+using Bing.Maps;
+#else
 using Windows.UI.Xaml.Controls.Maps;
+#endif
 
 [assembly: Xamarin.Forms.Platform.WinRT.ExportRenderer(typeof(Xamarin.Forms.Maps.Map), typeof(InTheHand.Forms.Maps.Platform.WinRT.MapRenderer))]
 
 namespace InTheHand.Forms.Maps.Platform.WinRT
 {
+#if WINDOWS_APP
+    public sealed class MapRenderer : Xamarin.Forms.Platform.WinRT.VisualElementRenderer<Xamarin.Forms.Maps.Map, Bing.Maps.Map>
+#else
     public sealed class MapRenderer : Xamarin.Forms.Platform.WinRT.VisualElementRenderer<Xamarin.Forms.Maps.Map, Windows.UI.Xaml.Controls.Maps.MapControl>
+#endif
     {
         private bool firstZoomLevelChangeFired;
 
@@ -24,16 +32,31 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
             if(e.NewElement != null)
             {
                 ((INotifyCollectionChanged)e.NewElement.Pins).CollectionChanged += MapRenderer_CollectionChanged;
+#if WINDOWS_APP
+                SetNativeControl(new Bing.Maps.Map());
+                Control.ViewChanged += Control_ViewChanged;
+                Control.MapType = MapTypeToBingMapType(e.NewElement.MapType);
+#else
                 SetNativeControl(new Windows.UI.Xaml.Controls.Maps.MapControl());
                 Control.ZoomLevelChanged += Control_ZoomLevelChanged;
                 Control.CenterChanged += Control_CenterChanged;
-                Xamarin.Forms.MessagingCenter.Subscribe<Xamarin.Forms.Maps.Map, Xamarin.Forms.Maps.MapSpan>(this, "MapMoveToRegion", (Action<Xamarin.Forms.Maps.Map, Xamarin.Forms.Maps.MapSpan>)((s, a) => this.MoveToRegion(a)), Element);
-      
+                
                 if(!string.IsNullOrEmpty(FormsMaps._serviceToken ))
                 {
                     Control.MapServiceToken = FormsMaps._serviceToken;
                 }
                 Control.Style = MapTypeToMapStyle(e.NewElement.MapType);
+#endif
+                if (!string.IsNullOrEmpty(FormsMaps._serviceToken))
+                {
+#if WINDOWS_APP
+                    Control.Credentials = FormsMaps._serviceToken;
+#else
+                    Control.MapServiceToken = FormsMaps._serviceToken;
+#endif
+                }
+                Xamarin.Forms.MessagingCenter.Subscribe<Xamarin.Forms.Maps.Map, Xamarin.Forms.Maps.MapSpan>(this, "MapMoveToRegion", (Action<Xamarin.Forms.Maps.Map, Xamarin.Forms.Maps.MapSpan>)((s, a) => this.MoveToRegion(a)), Element);
+      
                 AddPins();        
             }
             else
@@ -42,11 +65,26 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
             }
         }
 
+#if WINDOWS_APP
+        private void Control_ViewChanged(object sender, ViewChangedEventArgs e)
+        {
+            //throw new NotImplementedException();
+        }
+#endif
+
         private void AddPins()
         {
             foreach(Pin p in Element.Pins)
             {
+#if WINDOWS_APP
+                Pushpin pp = new Pushpin();
+                pp.Text = p.Label;
+                pp.SetValue(Bing.Maps.MapLayer.PositionProperty, new Location(p.Position.Latitude, p.Position.Longitude));
+
+                Control.Children.Add(pp);
+#else
                 Control.MapElements.Add(new MapIcon() { Location = new Windows.Devices.Geolocation.Geopoint(new Windows.Devices.Geolocation.BasicGeoposition() { Latitude = p.Position.Latitude, Longitude = p.Position.Longitude }), Title = p.Label });                  
+#endif
             }
         }
         void MapRenderer_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -54,28 +92,59 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
             switch(e.Action)
             {
                 case NotifyCollectionChangedAction.Reset:
+#if WINDOWS_APP
+                    Control.Children.Clear();
+#else
                     Control.MapElements.Clear();
+#endif
                     break;
                 case NotifyCollectionChangedAction.Add:
                     Pin p = e.NewItems[0] as Pin;
+#if WINDOWS_APP
+                    Pushpin pp = new Pushpin();
+                    pp.Text = p.Label;
+                    pp.SetValue(Bing.Maps.MapLayer.PositionProperty, new Location(p.Position.Latitude, p.Position.Longitude));
+
+                    Control.Children.Add(pp);
+#else
                     Control.MapElements.Insert(e.NewStartingIndex, new MapIcon(){ Location = new Windows.Devices.Geolocation.Geopoint(new Windows.Devices.Geolocation.BasicGeoposition(){ Latitude=p.Position.Latitude, Longitude=p.Position.Longitude}), Title = p.Label});
+#endif
                     break;
                 case NotifyCollectionChangedAction.Move:
+#if WINDOWS_APP
+#else
                     MapIcon i = Control.MapElements[e.OldStartingIndex] as MapIcon;
                     Control.MapElements.RemoveAt(e.OldStartingIndex);
                     Control.MapElements.Insert(e.NewStartingIndex, i);
+#endif
                     break;
                 case NotifyCollectionChangedAction.Remove:
+#if WINDOWS_APP
+                    Control.Children.RemoveAt(e.OldStartingIndex);
+#else
                     Control.MapElements.RemoveAt(e.OldStartingIndex);
+#endif
                     break;
                 case NotifyCollectionChangedAction.Replace:
-                    Control.MapElements.RemoveAt(e.OldStartingIndex);
                     Pin rp = e.NewItems[0] as Pin;
+#if WINDOWS_APP
+                    Control.Children.RemoveAt(e.OldStartingIndex);
+
+                    Pushpin rpp = new Pushpin();
+                    rpp.Text = rp.Label;
+                    rpp.SetValue(Bing.Maps.MapLayer.PositionProperty, new Location(rp.Position.Latitude, rp.Position.Longitude));
+
+                    Control.Children.Insert(e.OldStartingIndex, rpp);
+#else
+                    Control.MapElements.RemoveAt(e.OldStartingIndex);
+                    
                     Control.MapElements.Insert(e.OldStartingIndex, new MapIcon(){ Location = new Windows.Devices.Geolocation.Geopoint(new Windows.Devices.Geolocation.BasicGeoposition(){ Latitude=rp.Position.Latitude, Longitude=rp.Position.Longitude}), Title = rp.Label});
+#endif
                     break;
             }
         }
 
+#if WINDOWS_PHONE_APP
         void Control_CenterChanged(Windows.UI.Xaml.Controls.Maps.MapControl sender, object args)
         {
             UpdateVisibleRegion();
@@ -85,7 +154,7 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
         {
             UpdateVisibleRegion();
         }
-
+#endif
         private PropertyInfo _lmtrProperty = null;
         private PropertyInfo _vrProperty = null;
 
@@ -96,7 +165,7 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
                 MapSpan region = null;
                 if (_lmtrProperty == null)
                 {
-                    foreach (PropertyInfo pi in typeof(Map).GetRuntimeProperties())
+                    foreach (PropertyInfo pi in typeof(Xamarin.Forms.Maps.Map).GetRuntimeProperties())
                     {
                         if (pi.Name == "LastMoveToRegion")
                         {
@@ -113,7 +182,11 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
             }
             else
             {
+#if WINDOWS_APP
+                Position center = new Position(Control.Center.Latitude, Control.Center.Longitude);
+#else
                 Position center = new Position(Control.Center.Position.Latitude, Control.Center.Position.Longitude);
+#endif
                 //GeoCoordinate geoCoordinate1 = Control.ConvertViewportPointToGeoCoordinate(new Point(0.0, 0.0));
                 //GeoCoordinate geoCoordinate2 = Control.ConvertViewportPointToGeoCoordinate(new Point(Control.ActualWidth, Control.ActualHeight));
                 //if (geoCoordinate1 == (GeoCoordinate)null || geoCoordinate2 == (GeoCoordinate)null)
@@ -121,7 +194,7 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
                 //LocationRectangle boundingRectangle = LocationRectangle.CreateBoundingRectangle(geoCoordinate1, geoCoordinate2);
                 if (_vrProperty == null)
                 {
-                    foreach (PropertyInfo pi in typeof(Map).GetRuntimeProperties())
+                    foreach (PropertyInfo pi in typeof(Xamarin.Forms.Maps.Map).GetRuntimeProperties())
                     {
                         if (pi.Name == "VisibleRegion")
                         {
@@ -145,7 +218,11 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
 
         private async void MoveToRegion(MapSpan span)
         {
+#if WINDOWS_APP
+            Control.SetView(new Location(span.Center.Latitude, span.Center.Longitude), DegreesToZoomLevel(Math.Max(span.LatitudeDegrees, span.LatitudeDegrees)));
+#else
             await Control.TrySetViewAsync(new Windows.Devices.Geolocation.Geopoint(new Windows.Devices.Geolocation.BasicGeoposition() { Latitude = span.Center.Latitude, Longitude = span.Center.Longitude }), DegreesToZoomLevel(Math.Max(span.LatitudeDegrees, span.LatitudeDegrees)));
+#endif
         }
 
 
@@ -156,12 +233,35 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
             switch(e.PropertyName)
             {
                 case "MapType":
+#if WINDOWS_APP
+                    Control.MapType = MapTypeToBingMapType(Element.MapType);
+#else
                     Control.Style = MapTypeToMapStyle(Element.MapType);
+#endif
                     break;
             }
             base.OnElementPropertyChanged(sender, e);
         }
 
+#if WINDOWS_APP
+        private static Bing.Maps.MapType MapTypeToBingMapType(Xamarin.Forms.Maps.MapType type)
+        {
+            switch (type)
+            {
+                case Xamarin.Forms.Maps.MapType.Street:
+                    return Bing.Maps.MapType.Road;
+
+                case Xamarin.Forms.Maps.MapType.Satellite:
+                    return Bing.Maps.MapType.Aerial;
+
+                case Xamarin.Forms.Maps.MapType.Hybrid:
+                    return Bing.Maps.MapType.Birdseye;
+                   
+                default:
+                    return Bing.Maps.MapType.Empty;
+            }
+        }
+#else
         private static Windows.UI.Xaml.Controls.Maps.MapStyle MapTypeToMapStyle(Xamarin.Forms.Maps.MapType type)
         {
             switch(type)
@@ -179,6 +279,7 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
                     return Windows.UI.Xaml.Controls.Maps.MapStyle.None;
             }
         }
+#endif
 
         private double ZoomLevelToDegrees(int zoomLevel)
         {

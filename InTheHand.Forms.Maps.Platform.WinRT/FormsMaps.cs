@@ -13,7 +13,9 @@ namespace InTheHand
         public static void Init(string serviceToken)
         {
             _serviceToken = serviceToken;
+#if !WINDOWS_APP
             InTheHand.Forms.Maps.Platform.WinRT.GeocoderBackend.Register();
+#endif
         }
     }
 }
