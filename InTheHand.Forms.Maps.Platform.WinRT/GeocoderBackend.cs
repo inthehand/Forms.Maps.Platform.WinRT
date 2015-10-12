@@ -5,20 +5,46 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 using Xamarin.Forms.Maps;
+#if WINDOWS_APP
+using Bing.Maps;
+using Bing.Maps.Search;
+#else
 using Windows.Services.Maps;
+#endif
 
 namespace InTheHand.Forms.Maps.Platform.WinRT
 {
-    internal class GeocoderBackend
+    internal static class GeocoderBackend
     {
+#if WINDOWS_APP
+        private static SearchManager _manager;
+
+        private static void CreateSearchManager()
+        {
+            if(_manager == null)
+            {
+                Bing.Maps.Map m = new Bing.Maps.Map();
+
+                if (!string.IsNullOrEmpty(InTheHand.FormsMaps._serviceToken))
+                {
+                    m.Credentials = InTheHand.FormsMaps._serviceToken;
+                }
+                _manager = m.SearchManager;
+            }
+        }
+#endif
         internal static Position PositionForGeocoding { get; set; }
 
         public static void Register()
         {
+#if WINDOWS_APP
+            
+#else
             if (!string.IsNullOrEmpty(InTheHand.FormsMaps._serviceToken))
             {
                 MapService.ServiceToken = InTheHand.FormsMaps._serviceToken;
             }
+#endif
             foreach(FieldInfo fi in typeof(Geocoder).GetRuntimeFields())
             {
                 switch(fi.Name)
@@ -34,6 +60,7 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
             }
                     }
 
+#if WINDOWS_PHONE_APP
         private static string AddressToString(MapAddress address)
         {
             string str1 = "";
@@ -72,10 +99,23 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
                 str6 = address.Country;
             return str1 + str2 + str3 + str4 + str5 + str6;
         }
-
+#endif
         private static async Task<IEnumerable<string>> GetAddressesForPositionAsync(Position position)
         {
             List<string> results = new List<string>();
+#if WINDOWS_APP
+            CreateSearchManager();
+            Location location = new Location(position.Latitude, position.Longitude);
+            ReverseGeocodeRequestOptions options = new ReverseGeocodeRequestOptions(location);
+            
+            //options.IncludeEntityTypeFlags = ReverseGeocodeEntityType.Address | ReverseGeocodeEntityType.Neighborhood | ReverseGeocodeEntityType.Postcode | ReverseGeocodeEntityType.PopulatedPlace;
+
+            LocationDataResponse response = await _manager.ReverseGeocodeAsync(options);
+            foreach(GeocodeLocation l in response.LocationData)
+            {
+                results.Add(l.Address.FormattedAddress);
+            }
+#else
             MapLocationFinderResult result = await MapLocationFinder.FindLocationsAtAsync(new Windows.Devices.Geolocation.Geopoint(new Windows.Devices.Geolocation.BasicGeoposition() { Latitude = position.Latitude, Longitude = position.Longitude }));
             if(result.Status  == MapLocationFinderStatus.Success)
             {
@@ -87,13 +127,22 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
                     }
                 }
             }
-
+#endif
             return results;
         }
 
         private static async Task<IEnumerable<Position>> GetPositionsForAddressAsync(string s)
         {
             List<Position> results = new List<Position>();
+#if WINDOWS_APP
+            CreateSearchManager();
+            GeocodeRequestOptions options = new GeocodeRequestOptions(s);
+            LocationDataResponse response = await _manager.GeocodeAsync(options);
+            foreach(GeocodeLocation l in response.LocationData)
+            {
+                results.Add(new Position(l.Location.Latitude, l.Location.Longitude));
+            }
+#else
             MapLocationFinderResult result = await MapLocationFinder.FindLocationsAsync(s, new Windows.Devices.Geolocation.Geopoint(new Windows.Devices.Geolocation.BasicGeoposition()));
             if (result.Status == MapLocationFinderStatus.Success)
             {
@@ -105,7 +154,7 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
                     }
                 }
             }
-
+#endif
             return results;
         }
     }

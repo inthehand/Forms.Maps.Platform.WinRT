@@ -101,11 +101,16 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
+    <GenerateLibraryLayout>true</GenerateLibraryLayout>
+    <DocumentationFile>bin\x86\Release\InTheHand.Forms.Maps.Platform.Win81.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
     <Compile Include="..\InTheHand.Forms.Maps.Platform.WinRT\FormsMaps.cs">
       <Link>FormsMaps.cs</Link>
+    </Compile>
+    <Compile Include="..\InTheHand.Forms.Maps.Platform.WinRT\GeocoderBackend.cs">
+      <Link>GeocoderBackend.cs</Link>
     </Compile>
     <Compile Include="..\InTheHand.Forms.Maps.Platform.WinRT\MapRenderer.cs">
       <Link>MapRenderer.cs</Link>
@@ -147,7 +152,7 @@
     <SDKReference Include="Bing.Maps.Xaml, Version=1.313.0825.0">
       <Name>Bing Maps for C#, C++, or Visual Basic</Name>
     </SDKReference>
-    <SDKReference Include="Microsoft.VCLibs, version=12.0">
+    <SDKReference Include="Microsoft.VCLibs, Version=12.0">
       <Name>Microsoft Visual C++ 2013 Runtime Package for Windows</Name>
     </SDKReference>
   </ItemGroup>

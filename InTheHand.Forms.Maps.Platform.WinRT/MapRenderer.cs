@@ -11,6 +11,7 @@ using System.Collections.Specialized;
 using Bing.Maps;
 #else
 using Windows.UI.Xaml.Controls.Maps;
+using Windows.Devices.Geolocation;
 #endif
 
 [assembly: Xamarin.Forms.Platform.WinRT.ExportRenderer(typeof(Xamarin.Forms.Maps.Map), typeof(InTheHand.Forms.Maps.Platform.WinRT.MapRenderer))]
@@ -33,6 +34,7 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
             {
                 ((INotifyCollectionChanged)e.NewElement.Pins).CollectionChanged += MapRenderer_CollectionChanged;
 #if WINDOWS_APP
+                
                 SetNativeControl(new Bing.Maps.Map());
                 Control.ViewChanged += Control_ViewChanged;
                 Control.MapType = MapTypeToBingMapType(e.NewElement.MapType);
@@ -65,12 +67,7 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
             }
         }
 
-#if WINDOWS_APP
-        private void Control_ViewChanged(object sender, ViewChangedEventArgs e)
-        {
-            //throw new NotImplementedException();
-        }
-#endif
+
 
         private void AddPins()
         {
@@ -79,14 +76,27 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
 #if WINDOWS_APP
                 Pushpin pp = new Pushpin();
                 pp.Text = p.Label;
+                pp.Tag = p;
                 pp.SetValue(Bing.Maps.MapLayer.PositionProperty, new Location(p.Position.Latitude, p.Position.Longitude));
-
+                pp.Tapped += Pp_Tapped;
                 Control.Children.Add(pp);
 #else
-                Control.MapElements.Add(new MapIcon() { Location = new Windows.Devices.Geolocation.Geopoint(new Windows.Devices.Geolocation.BasicGeoposition() { Latitude = p.Position.Latitude, Longitude = p.Position.Longitude }), Title = p.Label });                  
+                MapIcon mi = new MapIcon() { Location = new Geopoint(new BasicGeoposition() { Latitude = p.Position.Latitude, Longitude = p.Position.Longitude }), Title = p.Label };
+               
+                Control.MapElements.Add(mi);                  
 #endif
             }
         }
+
+#if WINDOWS_APP
+        private void Pp_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        {
+            Pushpin pp = sender as Pushpin;
+            Pin p = pp.Tag as Pin;
+            typeof(Pin).GetTypeInfo().GetDeclaredMethod("SendTap").Invoke(p,new object[0]);
+        }
+#endif
+
         void MapRenderer_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             switch(e.Action)
@@ -103,11 +113,13 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
 #if WINDOWS_APP
                     Pushpin pp = new Pushpin();
                     pp.Text = p.Label;
+                    pp.Tag = p;
+                    pp.Tapped += Pp_Tapped;
                     pp.SetValue(Bing.Maps.MapLayer.PositionProperty, new Location(p.Position.Latitude, p.Position.Longitude));
 
                     Control.Children.Add(pp);
 #else
-                    Control.MapElements.Insert(e.NewStartingIndex, new MapIcon(){ Location = new Windows.Devices.Geolocation.Geopoint(new Windows.Devices.Geolocation.BasicGeoposition(){ Latitude=p.Position.Latitude, Longitude=p.Position.Longitude}), Title = p.Label});
+                    Control.MapElements.Insert(e.NewStartingIndex, new MapIcon(){ Location = new Geopoint(new BasicGeoposition(){ Latitude=p.Position.Latitude, Longitude=p.Position.Longitude}), Title = p.Label});
 #endif
                     break;
                 case NotifyCollectionChangedAction.Move:
@@ -132,19 +144,26 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
 
                     Pushpin rpp = new Pushpin();
                     rpp.Text = rp.Label;
+                    rpp.Tag = rp;
+                    rpp.Tapped += Pp_Tapped;
                     rpp.SetValue(Bing.Maps.MapLayer.PositionProperty, new Location(rp.Position.Latitude, rp.Position.Longitude));
 
                     Control.Children.Insert(e.OldStartingIndex, rpp);
 #else
                     Control.MapElements.RemoveAt(e.OldStartingIndex);
                     
-                    Control.MapElements.Insert(e.OldStartingIndex, new MapIcon(){ Location = new Windows.Devices.Geolocation.Geopoint(new Windows.Devices.Geolocation.BasicGeoposition(){ Latitude=rp.Position.Latitude, Longitude=rp.Position.Longitude}), Title = rp.Label});
+                    Control.MapElements.Insert(e.OldStartingIndex, new MapIcon(){ Location = new Geopoint(new BasicGeoposition(){ Latitude=rp.Position.Latitude, Longitude=rp.Position.Longitude}), Title = rp.Label});
 #endif
                     break;
             }
         }
 
-#if WINDOWS_PHONE_APP
+#if WINDOWS_APP
+        private void Control_ViewChanged(object sender, ViewChangedEventArgs e)
+        {
+            UpdateVisibleRegion();
+        }
+#elif WINDOWS_PHONE_APP
         void Control_CenterChanged(Windows.UI.Xaml.Controls.Maps.MapControl sender, object args)
         {
             UpdateVisibleRegion();
