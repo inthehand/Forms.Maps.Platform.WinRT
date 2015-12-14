@@ -7,6 +7,7 @@ using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 using System.Reflection;
 using System.Collections.Specialized;
+
 #if WINDOWS_APP
 using Bing.Maps;
 #else
@@ -14,19 +15,29 @@ using Windows.UI.Xaml.Controls.Maps;
 using Windows.Devices.Geolocation;
 #endif
 
-[assembly: Xamarin.Forms.Platform.WinRT.ExportRenderer(typeof(Xamarin.Forms.Maps.Map), typeof(InTheHand.Forms.Maps.Platform.WinRT.MapRenderer))]
+#if WINDOWS_UWP
+using Xamarin.Forms.Platform.UWP;
+[assembly: ExportRenderer(typeof(Xamarin.Forms.Maps.Map), typeof(InTheHand.Forms.Maps.Platform.UWP.MapRenderer))]
+
+namespace InTheHand.Forms.Maps.Platform.UWP
+#else
+using Xamarin.Forms.Platform.WinRT;
+[assembly: ExportRenderer(typeof(Xamarin.Forms.Maps.Map), typeof(InTheHand.Forms.Maps.Platform.WinRT.MapRenderer))]
 
 namespace InTheHand.Forms.Maps.Platform.WinRT
+#endif
+
+
 {
 #if WINDOWS_APP
     public sealed class MapRenderer : Xamarin.Forms.Platform.WinRT.VisualElementRenderer<Xamarin.Forms.Maps.Map, Bing.Maps.Map>
 #else
-    public sealed class MapRenderer : Xamarin.Forms.Platform.WinRT.VisualElementRenderer<Xamarin.Forms.Maps.Map, Windows.UI.Xaml.Controls.Maps.MapControl>
+    public sealed class MapRenderer : VisualElementRenderer<Xamarin.Forms.Maps.Map, Windows.UI.Xaml.Controls.Maps.MapControl>
 #endif
     {
         private bool firstZoomLevelChangeFired;
 
-        protected override void OnElementChanged(Xamarin.Forms.Platform.WinRT.ElementChangedEventArgs<Xamarin.Forms.Maps.Map> e)
+        protected override void OnElementChanged(ElementChangedEventArgs<Xamarin.Forms.Maps.Map> e)
         {
             base.OnElementChanged(e);
 
@@ -163,7 +174,7 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
         {
             UpdateVisibleRegion();
         }
-#elif WINDOWS_PHONE_APP
+#elif WINDOWS_PHONE_APP || WINDOWS_UWP
         void Control_CenterChanged(Windows.UI.Xaml.Controls.Maps.MapControl sender, object args)
         {
             UpdateVisibleRegion();

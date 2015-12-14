@@ -60,7 +60,7 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
             }
                     }
 
-#if WINDOWS_PHONE_APP
+#if WINDOWS_PHONE_APP || WINDOWS_UWP
         private static string AddressToString(MapAddress address)
         {
             string str1 = "";
