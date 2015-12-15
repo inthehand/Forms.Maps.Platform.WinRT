@@ -130,11 +130,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\InTheHand.Forms.Maps.Platform.Uwp\InTheHand.Forms.Maps.Platform.UWP.csproj">
-      <Project>{04e4bb26-6c8e-4aae-92e4-0ea6f7d1ccd1}</Project>
-      <Name>InTheHand.Forms.Maps.Platform.UWP</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MapsTest\MapsTest\MapsTest.csproj">
+    <ProjectReference Include="..\MapsTest\MapsTest.csproj">
       <Project>{e25e9837-61f0-4fa6-a305-c6bb5ddec4a8}</Project>
       <Name>MapsTest</Name>
     </ProjectReference>

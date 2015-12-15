@@ -30,9 +30,9 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
 
 {
 #if WINDOWS_APP
-    public sealed class MapRenderer : Xamarin.Forms.Platform.WinRT.VisualElementRenderer<Xamarin.Forms.Maps.Map, Bing.Maps.Map>
+    public class MapRenderer : Xamarin.Forms.Platform.WinRT.VisualElementRenderer<Xamarin.Forms.Maps.Map, Bing.Maps.Map>
 #else
-    public sealed class MapRenderer : VisualElementRenderer<Xamarin.Forms.Maps.Map, Windows.UI.Xaml.Controls.Maps.MapControl>
+    public class MapRenderer : VisualElementRenderer<Xamarin.Forms.Maps.Map, Windows.UI.Xaml.Controls.Maps.MapControl>
 #endif
     {
         private bool firstZoomLevelChangeFired;
@@ -93,7 +93,7 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
                 Control.Children.Add(pp);
 #else
                 MapIcon mi = new MapIcon() { Location = new Geopoint(new BasicGeoposition() { Latitude = p.Position.Latitude, Longitude = p.Position.Longitude }), Title = p.Label };
-               
+
                 Control.MapElements.Add(mi);                  
 #endif
             }

@@ -17,11 +17,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapsTest.WinRT", "MapsTest\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InTheHand.Forms.Maps.Platform.Win81", "InTheHand.Forms.Maps.Platform.Win81\InTheHand.Forms.Maps.Platform.Win81.csproj", "{77E7DF9E-9AA5-448F-BF90-20BAF3AC4282}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapsTest.win81", "MapsTest.win81\MapsTest.win81.csproj", "{7487EB9D-DA1E-413D-A8EF-1262E167A523}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapsTest.win81", "MapsTest\MapsTest.win81\MapsTest.win81.csproj", "{7487EB9D-DA1E-413D-A8EF-1262E167A523}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InTheHand.Forms.Maps.Platform.UWP", "InTheHand.Forms.Maps.Platform.Uwp\InTheHand.Forms.Maps.Platform.UWP.csproj", "{04E4BB26-6C8E-4AAE-92E4-0EA6F7D1CCD1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapsTest.UWP", "MapsTest.UWP\MapsTest.UWP.csproj", "{0CC09DB9-1A0D-465B-9210-B2DDBAE7A4B4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapsTest.UWP", "MapsTest\MapsTest.UWP\MapsTest.UWP.csproj", "{0CC09DB9-1A0D-465B-9210-B2DDBAE7A4B4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6CACEA7F-C4B6-4441-99A9-2B8037BF2774}"
+	ProjectSection(SolutionItems) = preProject
+		License.txt = License.txt
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -559,8 +564,8 @@ Global
 		{04E4BB26-6C8E-4AAE-92E4-0EA6F7D1CCD1}.Release|iPhone.Build.0 = Release|Any CPU
 		{04E4BB26-6C8E-4AAE-92E4-0EA6F7D1CCD1}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
 		{04E4BB26-6C8E-4AAE-92E4-0EA6F7D1CCD1}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
-		{04E4BB26-6C8E-4AAE-92E4-0EA6F7D1CCD1}.Release|x64.ActiveCfg = Release|x64
-		{04E4BB26-6C8E-4AAE-92E4-0EA6F7D1CCD1}.Release|x64.Build.0 = Release|x64
+		{04E4BB26-6C8E-4AAE-92E4-0EA6F7D1CCD1}.Release|x64.ActiveCfg = Release|Any CPU
+		{04E4BB26-6C8E-4AAE-92E4-0EA6F7D1CCD1}.Release|x64.Build.0 = Release|Any CPU
 		{04E4BB26-6C8E-4AAE-92E4-0EA6F7D1CCD1}.Release|x86.ActiveCfg = Release|x86
 		{04E4BB26-6C8E-4AAE-92E4-0EA6F7D1CCD1}.Release|x86.Build.0 = Release|x86
 		{0CC09DB9-1A0D-465B-9210-B2DDBAE7A4B4}.Ad-Hoc|Any CPU.ActiveCfg = Release|x64
