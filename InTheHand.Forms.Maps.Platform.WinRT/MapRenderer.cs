@@ -72,9 +72,9 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
       
                 AddPins();        
             }
-            else
+            else if(e.OldElement != null)
             {
-                ((INotifyCollectionChanged)e.NewElement.Pins).CollectionChanged -= MapRenderer_CollectionChanged;
+                ((INotifyCollectionChanged)e.OldElement.Pins).CollectionChanged -= MapRenderer_CollectionChanged;
             }
         }
 
