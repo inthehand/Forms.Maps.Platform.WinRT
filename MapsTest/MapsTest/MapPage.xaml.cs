@@ -26,7 +26,19 @@ namespace MapsTest
 
             // Move the view to surround the pushpin
             MyMap.MoveToRegion(Xamarin.Forms.Maps.MapSpan.FromCenterAndRadius(new Xamarin.Forms.Maps.Position(52.4817055, -1.9065627), Xamarin.Forms.Maps.Distance.FromKilometers(2)));
-            
+
+            Device.StartTimer(TimeSpan.FromMilliseconds(500), ()=>
+            {
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    if (MyMap.VisibleRegion != null)
+                    {
+                        LabelCenter.Text = string.Format("{0}, {1}", MyMap.VisibleRegion.Center.Latitude, MyMap.VisibleRegion.Center.Longitude);
+                        LabelBounds.Text = MyMap.VisibleRegion.LongitudeDegrees.ToString() + " by " + MyMap.VisibleRegion.LatitudeDegrees.ToString();
+                    }
+                });
+                return true;
+            });
             Task.Run(async () =>
             {
                 await Task.Delay(10000);

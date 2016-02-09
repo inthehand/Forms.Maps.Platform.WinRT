@@ -1,13 +1,12 @@
 ﻿{
   "dependencies": {
-    "InTheHand.Forms.Maps.Platform.WinRT": "2.0.1215.2",
     "Microsoft.ApplicationInsights": "1.2.3",
     "Microsoft.ApplicationInsights.PersistenceChannel": "1.2.3",
     "Microsoft.ApplicationInsights.WindowsApps": "1.1.1",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.0.0",
     "WpWinNl": "1.0.5",
-    "Xamarin.Forms": "2.0.0.6490",
-    "Xamarin.Forms.Maps": "2.0.0.6490"
+    "Xamarin.Forms": "2.0.1.6505",
+    "Xamarin.Forms.Maps": "2.0.1.6505"
   },
   "frameworks": {
     "uap10.0": {}

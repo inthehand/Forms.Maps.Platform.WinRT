@@ -49,10 +49,12 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
                 SetNativeControl(new Bing.Maps.Map());
                 Control.ViewChanged += Control_ViewChanged;
                 Control.MapType = MapTypeToBingMapType(e.NewElement.MapType);
+                controlReadyForMoveUpdates = true;
 #else
                 SetNativeControl(new Windows.UI.Xaml.Controls.Maps.MapControl());
                 Control.ZoomLevelChanged += Control_ZoomLevelChanged;
                 Control.CenterChanged += Control_CenterChanged;
+                Control.LoadingStatusChanged += Control_LoadingStatusChanged;
                 
                 if(!string.IsNullOrEmpty(FormsMaps._serviceToken ))
                 {
@@ -78,7 +80,14 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
             }
         }
 
+        bool controlReadyForMoveUpdates = false;
 
+#if !WINDOWS_APP
+        private void Control_LoadingStatusChanged(MapControl sender, object args)
+        {
+            controlReadyForMoveUpdates = Control.LoadingStatus == MapLoadingStatus.Loaded;
+        }
+#endif
 
         private void AddPins()
         {
@@ -190,6 +199,10 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
 
         private void UpdateVisibleRegion()
         {
+            if (!controlReadyForMoveUpdates)
+                return;
+
+
             if (!this.firstZoomLevelChangeFired)
             {
                 MapSpan region = null;
@@ -217,11 +230,6 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
 #else
                 Position center = new Position(Control.Center.Position.Latitude, Control.Center.Position.Longitude);
 #endif
-                //GeoCoordinate geoCoordinate1 = Control.ConvertViewportPointToGeoCoordinate(new Point(0.0, 0.0));
-                //GeoCoordinate geoCoordinate2 = Control.ConvertViewportPointToGeoCoordinate(new Point(Control.ActualWidth, Control.ActualHeight));
-                //if (geoCoordinate1 == (GeoCoordinate)null || geoCoordinate2 == (GeoCoordinate)null)
-                //    return;
-                //LocationRectangle boundingRectangle = LocationRectangle.CreateBoundingRectangle(geoCoordinate1, geoCoordinate2);
                 if (_vrProperty == null)
                 {
                     foreach (PropertyInfo pi in typeof(Xamarin.Forms.Maps.Map).GetRuntimeProperties())
@@ -233,10 +241,17 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
                         }
                     }
                 }
-                
+
                 // TODO: work out zoom conversion
-                double degrees = ZoomLevelToDegrees(Convert.ToInt32(Control.ZoomLevel));
-                _vrProperty.SetValue(Element, new MapSpan(center, degrees, degrees));
+#if WINDOWS_APP
+                _vrProperty.SetValue(Element, new MapSpan(center, Control.Bounds.Height, Control.Bounds.Width));
+#else
+                Geopoint point;
+                Control.GetLocationFromOffset(new Windows.Foundation.Point(0.0, 0.0), out point);
+                double lat = (point.Position.Latitude - center.Latitude) * 2;
+                double lon = (point.Position.Longitude - center.Longitude) * 2;
+                _vrProperty.SetValue(Element, new MapSpan(center, lat, lon));
+#endif
 
             }
         }
@@ -249,9 +264,30 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
         private async void MoveToRegion(MapSpan span)
         {
 #if WINDOWS_APP
-            Control.SetView(new Location(span.Center.Latitude, span.Center.Longitude), DegreesToZoomLevel(Math.Max(span.LatitudeDegrees, span.LatitudeDegrees)));
+            Control.SetView(new LocationRect(new Location(span.Center.Latitude, span.Center.Longitude), span.LongitudeDegrees, span.LatitudeDegrees));
 #else
-            await Control.TrySetViewAsync(new Windows.Devices.Geolocation.Geopoint(new Windows.Devices.Geolocation.BasicGeoposition() { Latitude = span.Center.Latitude, Longitude = span.Center.Longitude }), DegreesToZoomLevel(Math.Max(span.LatitudeDegrees, span.LatitudeDegrees)));
+            var nw = new BasicGeoposition()
+            {
+                Latitude = span.Center.Latitude + span.LatitudeDegrees / 2,
+                Longitude = span.Center.Longitude - span.LongitudeDegrees / 2,
+            };
+            var se = new BasicGeoposition()
+            {
+                Latitude = span.Center.Latitude - span.LatitudeDegrees / 2,
+                Longitude = span.Center.Longitude + span.LongitudeDegrees / 2
+            };
+
+            try
+            {
+                //_suspendUpdateVisibleRegion = true;
+                await this.Control.TrySetViewBoundsAsync(new GeoboundingBox(nw, se), null, MapAnimationKind.Bow);
+            }
+            finally
+            {
+                //_suspendUpdateVisibleRegion = false;
+            }
+
+            //await Control.TrySetViewAsync(new Windows.Devices.Geolocation.Geopoint(new Windows.Devices.Geolocation.BasicGeoposition() { Latitude = span.Center.Latitude, Longitude = span.Center.Longitude }), DegreesToZoomLevel(Math.Max(span.LatitudeDegrees, span.LatitudeDegrees)));
 #endif
         }
 
@@ -310,224 +346,6 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
             }
         }
 #endif
-
-        private double ZoomLevelToDegrees(int zoomLevel)
-        {
-            if (zoomLevel < 1 || zoomLevel > 20)
-            {
-                throw new ArgumentOutOfRangeException("zoomLevel");
-            }
-
-            switch (zoomLevel)
-            {
-                case 1:
-                    return 360.0;
-                case 2:
-                    return 180.0;
-                case 3:
-                    return 90.0;
-                case 4:
-                    return 45.0;
-                case 5:
-                    return 22.5;
-                case 6:
-                    return 11.25;
-                case 7:
-                    return 5.625;
-                case 8:
-                    return 2.8125;
-                case 9:
-                    return 1.40625;
-                case 10:
-                    return 0.703125;
-                case 11:
-                    return 0.3515625;
-                case 12:
-                    return 0.17578125;
-                case 13:
-                    return 0.087890625;
-                case 14:
-                    return 0.0439453125;
-                case 15:
-                    return 0.02197265625;
-                case 16:
-                    return 0.010986328125;
-                case 17:
-                    return 0.0054931640625;
-                case 18:
-                    return 0.00274658203125;
-                case 19:
-                    return 0.001373291015625;
-                case 20:
-                    return 0.0006866455078125;
-            }
-
-            return 0.0;
-        }
-
-        private int DegreesToZoomLevel(double degrees)
-        {
-            if (degrees > 180)
-            {
-                return 1;
-            }
-            else if (degrees > 90)
-            {
-                return 2;
-            }
-            else if (degrees > 45)
-            {
-                return 3;
-            }
-            else if (degrees > 22.5)
-            {
-                return 4;
-            }
-            else if (degrees > 11.25)
-            {
-                return 5;
-            }
-            else if (degrees > 5.625)
-            {
-                return 6;
-            }
-            else if (degrees > 2.8125)
-            {
-                return 7;
-            }
-            else if (degrees > 1.40625)
-            {
-                return 8;
-            }
-            else if (degrees > 0.703125)
-            {
-                return 9;
-            }
-            else if (degrees > 0.3515625)
-            {
-                return 10;
-            }
-            else if (degrees > 0.17578125)
-            {
-                return 11;
-            }
-            else if (degrees > 0.087890625)
-            {
-                return 12;
-            }
-            else if (degrees > 0.0439453125)
-            {
-                return 13;
-            }
-            else if (degrees > 0.2197265625)
-            {
-                return 14;
-            }
-            else if (degrees > 0.010986328125)
-            {
-                return 15;
-            }
-            else if (degrees > 0.0054931640625)
-            {
-                return 16;
-            }
-            else if (degrees > 0.00274658203125)
-            {
-                return 17;
-            }
-            else if (degrees > 0.001373291015625)
-            {
-                return 18;
-            }
-            else if (degrees > 0.0006866455078125)
-            {
-                return 19;
-            }
-            return 20;
-        }
-
-        /*private int RadiusToZoomLevel(double meters)
-        {
-            double renderedLength = Math.Min(this.Control.ActualWidth, this.Control.ActualHeight);
-            double mperp = (meters*2) / renderedLength;
-            if(mperp<=.30)
-            {
-                return 19;
-            }
-            else if (mperp <= .60)
-            {
-                return 18;
-            }
-            else if (mperp <= 1.19)
-            {
-                return 17;
-            }
-            else if (mperp <= 2.39)
-            {
-                return 16;
-            }
-            else if (mperp <= 4.78)
-            {
-                return 15;
-            }
-            else if (mperp <=9.55)
-            {
-                return 14;
-            }
-            else if (mperp <= 19.11)
-            {
-                return 13;
-            }
-            else if (mperp <= 38.22)
-            {
-                return 12;
-            }
-            else if (mperp <= 76.44)
-            {
-                return 11;
-            }
-            else if (mperp <= 152.87)
-            {
-                return 10;
-            }
-            else if (mperp <= 305.75)
-            {
-                return 9;
-            }
-            else if (mperp <= 611.50)
-            {
-                return 8;
-            }
-            else if (mperp <= 1222.99)
-            {
-                return 7;
-            }
-            else if (mperp <= 2445.98)
-            {
-                return 6;
-            }
-            else if (mperp <= 4891.97)
-            {
-                return 5;
-            }
-            else if (mperp <= 9783.94)
-            {
-                return 4;
-            }
-            else if (mperp <= 19567.88)
-            {
-                return 3;
-            }
-            else if (mperp <= 39135.76)
-            {
-                return 2;
-            }
-            else if (mperp <= 78271.52)
-            {
-                return 1;
-            }
-            
-            return 0;
-        }*/
+  
     }
 }

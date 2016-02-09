@@ -3,5 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:maps="clr-namespace:Xamarin.Forms.Maps;assembly=Xamarin.Forms.Maps"
              x:Class="MapsTest.MapPage">
-  <maps:Map x:Name="MyMap" IsShowingUser="True"/>
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+    <maps:Map x:Name="MyMap" IsShowingUser="True"/>
+    <Label Grid.Row="1" x:Name="LabelCenter"/>
+    <Label Grid.Row="2" x:Name="LabelBounds"/>
+  </Grid>
+  
 </ContentPage>
