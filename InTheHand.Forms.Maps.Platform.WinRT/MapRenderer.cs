@@ -48,6 +48,8 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
                 
                 SetNativeControl(new Bing.Maps.Map());
                 Control.ViewChanged += Control_ViewChanged;
+                Control.ManipulationMode = Element.HasScrollEnabled ? Control.ManipulationMode & Windows.UI.Xaml.Input.ManipulationModes.Scale : Control.ManipulationMode ^ Windows.UI.Xaml.Input.ManipulationModes.Scale;
+
                 Control.MapType = MapTypeToBingMapType(e.NewElement.MapType);
                 controlReadyForMoveUpdates = true;
 #else
@@ -109,11 +111,13 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
         }
 
 #if WINDOWS_APP
+
+        MethodInfo _tapMethod = typeof(Pin).GetTypeInfo().GetDeclaredMethod("SendTap");
         private void Pp_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
         {
             Pushpin pp = sender as Pushpin;
             Pin p = pp.Tag as Pin;
-            typeof(Pin).GetTypeInfo().GetDeclaredMethod("SendTap").Invoke(p,new object[0]);
+            _tapMethod.Invoke(p,new object[0]);
         }
 #endif
 
@@ -303,6 +307,13 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
                     Control.MapType = MapTypeToBingMapType(Element.MapType);
 #else
                     Control.Style = MapTypeToMapStyle(Element.MapType);
+#endif
+                    break;
+
+                case "HasScrollEnabled":
+#if WINDOWS_APP
+                    Control.ManipulationMode = Element.HasScrollEnabled ? Control.ManipulationMode & Windows.UI.Xaml.Input.ManipulationModes.Scale : Control.ManipulationMode ^ Windows.UI.Xaml.Input.ManipulationModes.Scale;
+#else
 #endif
                     break;
             }

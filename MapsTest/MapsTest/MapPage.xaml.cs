@@ -14,7 +14,7 @@ namespace MapsTest
         public MapPage()
         {
             InitializeComponent();
-
+            
             // Add a sample pushpin to the map
             MyMap.Pins.Add(new Xamarin.Forms.Maps.Pin() { Label = "Cheese", Position = new Xamarin.Forms.Maps.Position(52.4817055, -1.9065627) });
 
@@ -70,6 +70,20 @@ namespace MapsTest
                     System.Diagnostics.Debug.WriteLine(pos.Latitude + ", " + pos.Longitude);
                 }
             }
+        }
+
+        private void Street_Clicked(object sender, EventArgs e)
+        {
+            MyMap.MapType = MapType.Street;
+        }
+        private void Satellite_Clicked(object sender, EventArgs e)
+        {
+            MyMap.MapType = MapType.Satellite;
+        }
+
+        private void Hybrid_Clicked(object sender, EventArgs e)
+        {
+            MyMap.MapType = MapType.Hybrid;
         }
     }
 }

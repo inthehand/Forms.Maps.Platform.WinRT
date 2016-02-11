@@ -7,8 +7,8 @@
     <ProjectGuid>{04E4BB26-6C8E-4AAE-92E4-0EA6F7D1CCD1}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>InTheHand.Forms.Maps.Platform.Uwp</RootNamespace>
-    <AssemblyName>InTheHand.Forms.Maps.Platform.Uwp</AssemblyName>
+    <RootNamespace>InTheHand.Forms.Maps.Platform.UWP</RootNamespace>
+    <AssemblyName>InTheHand.Forms.Maps.Platform.UWP</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion>10.0.10586.0</TargetPlatformVersion>
@@ -36,7 +36,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <GenerateLibraryLayout>true</GenerateLibraryLayout>
-    <DocumentationFile>..\nuget\lib\uap10\InTheHand.Forms.Maps.Platform.Uwp.XML</DocumentationFile>
+    <DocumentationFile>..\nuget\lib\uap10\InTheHand.Forms.Maps.Platform.UWP.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <PlatformTarget>x86</PlatformTarget>
@@ -60,7 +60,7 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
     <GenerateLibraryLayout>true</GenerateLibraryLayout>
-    <DocumentationFile>..\nuget\runtimes\uap10-x86\lib\uap10\InTheHand.Forms.Maps.Platform.Uwp.XML</DocumentationFile>
+    <DocumentationFile>..\nuget\runtimes\uap10-x86\lib\uap10\InTheHand.Forms.Maps.Platform.UWP.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
     <PlatformTarget>ARM</PlatformTarget>
@@ -84,7 +84,7 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
     <GenerateLibraryLayout>true</GenerateLibraryLayout>
-    <DocumentationFile>..\nuget\runtimes\uap10-ARM\lib\uap10\InTheHand.Forms.Maps.Platform.Uwp.XML</DocumentationFile>
+    <DocumentationFile>..\nuget\runtimes\uap10-ARM\lib\uap10\InTheHand.Forms.Maps.Platform.UWP.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <PlatformTarget>x64</PlatformTarget>
@@ -108,7 +108,7 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
     <GenerateLibraryLayout>true</GenerateLibraryLayout>
-    <DocumentationFile>..\nuget\runtimes\uap10-x64\lib\uap10\InTheHand.Forms.Maps.Platform.Uwp.XML</DocumentationFile>
+    <DocumentationFile>..\nuget\runtimes\uap10-x64\lib\uap10\InTheHand.Forms.Maps.Platform.UWP.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->

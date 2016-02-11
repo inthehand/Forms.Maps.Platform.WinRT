@@ -5,13 +5,19 @@
              x:Class="MapsTest.MapPage">
   <Grid>
     <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
       <RowDefinition Height="*"/>
       <RowDefinition Height="Auto"/>
       <RowDefinition Height="Auto"/>
     </Grid.RowDefinitions>
-    <maps:Map x:Name="MyMap" IsShowingUser="True"/>
-    <Label Grid.Row="1" x:Name="LabelCenter"/>
-    <Label Grid.Row="2" x:Name="LabelBounds"/>
+    <StackLayout Orientation="Horizontal">
+      <Button Text="Street" Clicked="Street_Clicked"/>
+      <Button Text="Satellite" Clicked="Satellite_Clicked"/>
+      <Button Text="Hybrid" Clicked="Hybrid_Clicked"/>
+    </StackLayout>
+    <maps:Map Grid.Row="1" x:Name="MyMap" IsShowingUser="True"/>
+    <Label Grid.Row="2" x:Name="LabelCenter"/>
+    <Label Grid.Row="3" x:Name="LabelBounds"/>
   </Grid>
   
 </ContentPage>

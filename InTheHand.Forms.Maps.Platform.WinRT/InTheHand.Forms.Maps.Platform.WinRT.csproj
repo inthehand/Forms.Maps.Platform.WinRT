@@ -35,7 +35,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <GenerateLibraryLayout>true</GenerateLibraryLayout>
-    <DocumentationFile>bin\Release\InTheHand.Forms.Maps.Platform.WinRT.XML</DocumentationFile>
+    <DocumentationFile>..\nuget\lib\wpa81\InTheHand.Forms.Maps.Platform.WinRT.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="FormsMaps.cs" />
