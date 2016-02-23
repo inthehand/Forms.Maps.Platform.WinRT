@@ -103,7 +103,7 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
                 pp.Tapped += Pp_Tapped;
                 Control.Children.Add(pp);
 #else
-                MapIcon mi = new MapIcon() { Location = new Geopoint(new BasicGeoposition() { Latitude = p.Position.Latitude, Longitude = p.Position.Longitude }), Title = p.Label };
+                MapIcon mi = new MapIcon() { Location = new Geopoint(new BasicGeoposition() { Latitude = p.Position.Latitude, Longitude = p.Position.Longitude }), Title = p.Label, NormalizedAnchorPoint = new Windows.Foundation.Point(0.5,1.0) };
 
                 Control.MapElements.Add(mi);                  
 #endif
@@ -143,7 +143,7 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
 
                     Control.Children.Add(pp);
 #else
-                    Control.MapElements.Insert(e.NewStartingIndex, new MapIcon(){ Location = new Geopoint(new BasicGeoposition(){ Latitude=p.Position.Latitude, Longitude=p.Position.Longitude}), Title = p.Label});
+                    Control.MapElements.Insert(e.NewStartingIndex, new MapIcon(){ Location = new Geopoint(new BasicGeoposition(){ Latitude=p.Position.Latitude, Longitude=p.Position.Longitude}), Title = p.Label, NormalizedAnchorPoint = new Windows.Foundation.Point(0.5, 1.0) });
 #endif
                     break;
                 case NotifyCollectionChangedAction.Move:
@@ -176,7 +176,7 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
 #else
                     Control.MapElements.RemoveAt(e.OldStartingIndex);
                     
-                    Control.MapElements.Insert(e.OldStartingIndex, new MapIcon(){ Location = new Geopoint(new BasicGeoposition(){ Latitude=rp.Position.Latitude, Longitude=rp.Position.Longitude}), Title = rp.Label});
+                    Control.MapElements.Insert(e.OldStartingIndex, new MapIcon(){ Location = new Geopoint(new BasicGeoposition(){ Latitude=rp.Position.Latitude, Longitude=rp.Position.Longitude}), Title = rp.Label, NormalizedAnchorPoint = new Windows.Foundation.Point(0.5, 1.0) });
 #endif
                     break;
             }
