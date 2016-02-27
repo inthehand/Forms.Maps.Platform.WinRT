@@ -17,7 +17,7 @@
     </StackLayout>
     <maps:Map Grid.Row="1" x:Name="MyMap" IsShowingUser="True"/>
     <Label Grid.Row="2" x:Name="LabelCenter"/>
-    <Label Grid.Row="3" x:Name="LabelBounds"/>
+    <Switch Grid.Row="3" x:Name="MySwitch"  Toggled="Switch_Toggled" IsToggled="true"/>
   </Grid>
   
 </ContentPage>

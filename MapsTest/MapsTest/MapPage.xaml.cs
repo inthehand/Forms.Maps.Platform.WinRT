@@ -18,12 +18,7 @@ namespace MapsTest
             // Add a sample pushpin to the map
             MyMap.Pins.Add(new Xamarin.Forms.Maps.Pin() { Label = "Cheese", Position = new Xamarin.Forms.Maps.Position(52.4817055, -1.9065627) });
 
-            foreach(Pin p in MyMap.Pins)
-            {
-                p.Clicked += P_Clicked;
-
-            }
-
+            
             // Move the view to surround the pushpin
             MyMap.MoveToRegion(Xamarin.Forms.Maps.MapSpan.FromCenterAndRadius(new Xamarin.Forms.Maps.Position(52.4817055, -1.9065627), Xamarin.Forms.Maps.Distance.FromKilometers(2)));
 
@@ -34,7 +29,7 @@ namespace MapsTest
                     if (MyMap.VisibleRegion != null)
                     {
                         LabelCenter.Text = string.Format("{0}, {1}", MyMap.VisibleRegion.Center.Latitude, MyMap.VisibleRegion.Center.Longitude);
-                        LabelBounds.Text = MyMap.VisibleRegion.LongitudeDegrees.ToString() + " by " + MyMap.VisibleRegion.LatitudeDegrees.ToString();
+                        //LabelBounds.Text = MyMap.VisibleRegion.LongitudeDegrees.ToString() + " by " + MyMap.VisibleRegion.LatitudeDegrees.ToString();
                     }
                 });
                 return true;
@@ -55,9 +50,22 @@ namespace MapsTest
                     MyMap.Pins.Add(new Xamarin.Forms.Maps.Pin() { Label = "Cup of Tea", Position = new Xamarin.Forms.Maps.Position(52.4804469, -1.9019083) });
                 });
 
+                foreach (Pin p in MyMap.Pins)
+                {
+                    p.Clicked += P_Clicked;
+
+                }
+
             });
         }
 
+        private void Switch_Toggled(object sender, ToggledEventArgs e)
+        {
+            if (MyMap != null)
+            {
+                MyMap.IsVisible = e.Value;
+            }
+        }
         private async void P_Clicked(object sender, EventArgs e)
         {
             Pin p = sender as Pin;

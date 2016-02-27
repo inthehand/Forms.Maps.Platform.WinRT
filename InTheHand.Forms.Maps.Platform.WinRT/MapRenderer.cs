@@ -56,6 +56,9 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
                 SetNativeControl(new Windows.UI.Xaml.Controls.Maps.MapControl());
                 Control.ZoomLevelChanged += Control_ZoomLevelChanged;
                 Control.CenterChanged += Control_CenterChanged;
+#if WINDOWS_UWP
+                Control.MapElementClick += Control_MapElementClick;
+#endif
                 Control.LoadingStatusChanged += Control_LoadingStatusChanged;
                 
                 if(!string.IsNullOrEmpty(FormsMaps._serviceToken ))
@@ -82,6 +85,24 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
             }
         }
 
+#if WINDOWS_UWP
+        private void Control_MapElementClick(MapControl sender, MapElementClickEventArgs args)
+        {
+            MapIcon i = args.MapElements[0] as MapIcon;
+            if (i != null)
+            {
+                foreach (Pin p in Element.Pins)
+                {
+                    if (p.Position.Latitude == i.Location.Position.Latitude && p.Position.Longitude == i.Location.Position.Longitude)
+                    {
+                        _tapMethod.Invoke(p, new object[0]);
+                        break;
+                    }
+                }
+            }
+        }
+#endif
+
         bool controlReadyForMoveUpdates = false;
 
 #if !WINDOWS_APP
@@ -104,15 +125,16 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
                 Control.Children.Add(pp);
 #else
                 MapIcon mi = new MapIcon() { Location = new Geopoint(new BasicGeoposition() { Latitude = p.Position.Latitude, Longitude = p.Position.Longitude }), Title = p.Label, NormalizedAnchorPoint = new Windows.Foundation.Point(0.5,1.0) };
-
                 Control.MapElements.Add(mi);                  
 #endif
             }
         }
 
+        MethodInfo _tapMethod = typeof(Pin).GetTypeInfo().GetDeclaredMethod("SendTap");
+
 #if WINDOWS_APP
 
-        MethodInfo _tapMethod = typeof(Pin).GetTypeInfo().GetDeclaredMethod("SendTap");
+        
         private void Pp_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
         {
             Pushpin pp = sender as Pushpin;
