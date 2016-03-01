@@ -19,9 +19,7 @@ namespace MapsTest
             MyMap.Pins.Add(new Xamarin.Forms.Maps.Pin() { Label = "Cheese", Position = new Xamarin.Forms.Maps.Position(52.4817055, -1.9065627) });
 
             
-            // Move the view to surround the pushpin
-            MyMap.MoveToRegion(Xamarin.Forms.Maps.MapSpan.FromCenterAndRadius(new Xamarin.Forms.Maps.Position(52.4817055, -1.9065627), Xamarin.Forms.Maps.Distance.FromKilometers(2)));
-
+            
             Device.StartTimer(TimeSpan.FromMilliseconds(500), ()=>
             {
                 Device.BeginInvokeOnMainThread(() =>
@@ -39,6 +37,9 @@ namespace MapsTest
                 await Task.Delay(10000);
                 Device.BeginInvokeOnMainThread(() =>
                 {
+                    // Move the view to surround the pushpin
+                    MyMap.MoveToRegion(Xamarin.Forms.Maps.MapSpan.FromCenterAndRadius(new Xamarin.Forms.Maps.Position(52.4817055, -1.9065627), Xamarin.Forms.Maps.Distance.FromKilometers(1)));
+
                     // add an additional pushpin to simlulate user action
                     MyMap.Pins.Add(new Xamarin.Forms.Maps.Pin() { Label = "Toast", Position = new Xamarin.Forms.Maps.Position(52.479014, -1.9039143) });
                 });

@@ -44,6 +44,8 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
             if(e.NewElement != null)
             {
                 ((INotifyCollectionChanged)e.NewElement.Pins).CollectionChanged += MapRenderer_CollectionChanged;
+                MessagingCenter.Subscribe<Map, MapSpan>(this, "MapMoveToRegion", (Action<Map, MapSpan>)((s, a) => this.MoveToRegion(a)), Element);
+
 #if WINDOWS_APP
                 
                 SetNativeControl(new Bing.Maps.Map());
@@ -58,6 +60,8 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
                 Control.CenterChanged += Control_CenterChanged;
 #if WINDOWS_UWP
                 Control.MapElementClick += Control_MapElementClick;
+#elif WINDOWS_PHONE_APP
+                Control.MapTapped += Control_MapTapped;
 #endif
                 Control.LoadingStatusChanged += Control_LoadingStatusChanged;
                 
@@ -75,8 +79,7 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
                     Control.MapServiceToken = FormsMaps._serviceToken;
 #endif
                 }
-                Xamarin.Forms.MessagingCenter.Subscribe<Xamarin.Forms.Maps.Map, Xamarin.Forms.Maps.MapSpan>(this, "MapMoveToRegion", (Action<Xamarin.Forms.Maps.Map, Xamarin.Forms.Maps.MapSpan>)((s, a) => this.MoveToRegion(a)), Element);
-      
+                
                 AddPins();        
             }
             else if(e.OldElement != null)
@@ -84,6 +87,26 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
                 ((INotifyCollectionChanged)e.OldElement.Pins).CollectionChanged -= MapRenderer_CollectionChanged;
             }
         }
+#if WINDOWS_PHONE_APP
+        private void Control_MapTapped(MapControl sender, MapInputEventArgs args)
+        {
+            Geopoint nw, se;
+
+            Control.GetLocationFromOffset(new Windows.Foundation.Point(args.Position.X - 20, args.Position.Y - 20), out nw);
+            Control.GetLocationFromOffset(new Windows.Foundation.Point(args.Position.X + 20, args.Position.Y + 20), out se);
+
+            System.Diagnostics.Debug.WriteLine(args.Location.GeoshapeType.ToString());
+
+            foreach(Pin p in Element.Pins)
+            {
+                if(p.Position.Latitude < nw.Position.Latitude && p.Position.Latitude > se.Position.Latitude && p.Position.Longitude > nw.Position.Longitude && p.Position.Longitude < se.Position.Longitude)
+                {
+                    _tapMethod.Invoke(p, new object[0]);
+                    break;
+                }
+            }
+        }
+#endif
 
 #if WINDOWS_UWP
         private void Control_MapElementClick(MapControl sender, MapElementClickEventArgs args)
@@ -339,7 +362,10 @@ namespace InTheHand.Forms.Maps.Platform.WinRT
 #endif
                     break;
             }
-            base.OnElementPropertyChanged(sender, e);
+            if (e.PropertyName != "Renderer")
+            {
+                base.OnElementPropertyChanged(sender, e);
+            }
         }
 
 #if WINDOWS_APP

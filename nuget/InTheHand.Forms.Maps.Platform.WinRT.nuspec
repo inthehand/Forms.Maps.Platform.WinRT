@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2013/01/nuspec.xsd">
   <metadata minClientVersion="2.8.1">
     <id>InTheHand.Forms.Maps.Platform.WinRT</id>
-    <version>2.0.60222.0-pre</version>
+    <version>2.1.16.301</version>
     <title>Xamarin.Forms.Maps for Windows</title>
     <authors>Peter Foot</authors>
     <owners>Peter Foot</owners>
@@ -11,11 +11,11 @@
     <iconUrl>https://inthehandltd.files.wordpress.com/2015/07/ith-modern.png</iconUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>Windows Renderer and Geocoder for Xamarin Maps</description>
-    <releaseNotes>New NuGet structure to hopefully support WP8.1, Win8.1 and Win10. Performance improvements to renderer.</releaseNotes>
+    <releaseNotes>New NuGet structure to support Windows Phone 8.1 and Windows 10. Performance improvements and bug fixes to renderer.</releaseNotes>
     <copyright>Copyright 2015-16 In The Hand Ltd</copyright>
     <tags>windows xamarin maps</tags>
     <dependencies>
-      <dependency id="Xamarin.Forms.Maps" version="2.0.1.6505" />
+      <dependency id="Xamarin.Forms.Maps" version="2.1.0.6521" />
     </dependencies>
   </metadata>
 </package>
