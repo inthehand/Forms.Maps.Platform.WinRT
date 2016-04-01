@@ -1,12 +1,8 @@
 ﻿{
   "dependencies": {
-    "Microsoft.ApplicationInsights": "1.2.3",
-    "Microsoft.ApplicationInsights.PersistenceChannel": "1.2.3",
-    "Microsoft.ApplicationInsights.WindowsApps": "1.1.1",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.0.0",
-    "WpWinNl": "1.0.5",
-    "Xamarin.Forms": "2.0.1.6505",
-    "Xamarin.Forms.Maps": "2.0.1.6505"
+    "Xamarin.Forms": "2.1.0.6529",
+    "Xamarin.Forms.Maps": "2.1.0.6529"
   },
   "frameworks": {
     "uap10.0": {}
